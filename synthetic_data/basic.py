@@ -1,5 +1,5 @@
-from bluesky.plans import count, scan, fly
-from bluesky.examples import det, motor
+from bluesky.plans import count, scan, fly, baseline_wrapper
+from bluesky.examples import det, det1, motor
 from .utils import RE_with_mds
 
 
@@ -16,6 +16,18 @@ def multi_count(mds):
 def step_scan(mds):
     RE = RE_with_mds(mds)
     RE(scan([det], motor, 1, 5, 5))
+
+
+def step_scan_with_overlapping_baseline(mds):
+    "same det in 'baseline' and in 'primary' event stream"
+    RE = RE_with_mds(mds)
+    RE(baseline_wrapper(scan([det], motor, 1, 5, 5), [det]))
+
+
+def step_scan_with_distinct_baseline(mds):
+    "'baseline' and 'primary' event stream use different dets"
+    RE = RE_with_mds(mds)
+    RE(baseline_wrapper(scan([det], motor, 1, 5, 5), [det1]))
 
 
 def fly_scan(mds):
